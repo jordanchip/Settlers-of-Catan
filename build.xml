@@ -1,0 +1,200 @@
+﻿<project name="Catan!" default="server-sql" basedir=".">
+
+	<!-- PROPERTIES -->
+	<!-- ********** -->	
+    
+	<!-- Directory paths for the java server, javascript, and dest dir for the student copy -->
+    <property name="port.arg" value="8081"/>
+     
+    <!-- Input folders -->
+    <property name="java.dir" value="."/>
+    <property name="java.src.dir" value="src"/>
+    <property name="java.lib.dir" value="lib"/>
+    <!-- JavaScript source folder -->
+    <property name="javascript.dir" value="gameplay/js"/>
+    
+    <!-- Base output folder -->
+    <property name="dest.dir" value="docs"/>
+    <!-- Javadoc output folder -->
+    <property name="javadoc.dir" value="${dest.dir}/java"/>
+    <!-- Jar file path/name from here -->
+	<property name="demo.dir" value="demo"/>
+    <property name="server.jar.file" value="${demo.dir}/server.jar"/>
+    <property name="client.jar.file" value="${demo.dir}/client.jar"/>
+  
+	<!-- CLASSPATHS -->
+	<!-- ********** -->
+    
+	<path id="java.lib.classpath">
+		<fileset dir="${java.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<!-- TARGETS -->
+	<!-- ******* -->
+     
+	<target name="demo-server" description="Runs the demo server">
+		<java jar="${server.jar.file}" fork="true" dir="${demo.dir}">
+			<arg value="${port.arg}"/>
+			<arg value="${web.arg}"/>
+			<arg value="${options.arg}"/>
+			<assertions>
+				<enable/>
+			</assertions>
+		</java>
+	</target>
+    
+	<target name="demo-client" description="Runs the demo client">
+		<java jar="${client.jar.file}" fork="true" dir="${demo.dir}">
+			<assertions>
+				<enable/>
+			</assertions>
+		</java>
+	</target>
+    
+    <target name="make-java-doc" description="Generate the Java docs">
+        <echo> Making Java documentation </echo>
+        <delete dir="${javadoc.dir}"/>
+		<javadoc destdir="${javadoc.dir}" Package="true">
+			<classpath refid="java.lib.classpath" />
+			<packageset dir="${java.src.dir}">
+				<include name="client/**"/>
+				<include name="shared/**"/>
+			</packageset>
+		</javadoc>
+   </target>
+
+  	<property name="java.dir" location="."/>
+	<property name="java.src" location="${java.dir}/src"/>
+	<property name="java.images" location="${java.dir}/images"/>
+	<property name="java.build" location="${java.dir}/build"/>
+	<property name="java.dist" location="${java.dir}/dist"/>
+	<property name="java.lib" location="${java.dir}/lib"/>
+ 
+	<target name="init" description="create build directories">
+		<tstamp/>
+		<mkdir dir="${java.build}"/>
+		<mkdir dir="${java.dist}"/>
+	</target>
+		
+	<target name="clean" description="clean build files" >
+		<delete dir="${java.build}"/>
+		<delete dir="${java.dist}"/>
+	</target>
+    
+	<target name="compile" depends="init" description="compile the source " >
+		<javac srcdir="${java.src}" destdir="${java.build}" debug="true" includeantruntime="true">
+			<classpath refid="java.lib.classpath" />
+		</javac>
+	</target>
+	
+	<target name="package" depends="compile" description="package the jar file" >
+		<mkdir dir="${java.dist}/lib"/>
+		<copy todir="${java.dist}/lib">
+			<fileset dir="${java.lib}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+		<mkdir dir="${java.dist}/images"/>
+		<copy todir="${java.dist}/images">
+			<fileset dir="${java.images}">
+				<include name="**"/>
+			</fileset>
+		</copy>
+		<mkdir dir="${java.dist}/plugins"/>
+		<copy todir="${java.dist}/plugins">
+			<fileset dir="plugins">
+				<include name="**"/>
+			</fileset>
+		</copy>
+		<mkdir dir="${java.dist}/db"/>
+		<copy todir="${java.dist}/db">
+			<fileset dir="db">
+				<include name="Catan.sqlite"/>
+			</fileset>
+		</copy>
+		<manifestclasspath property="server.classpath" jarfile="${java.dist}/catan-server.jar">
+		    <classpath refid="java.lib.classpath"/>
+		</manifestclasspath>
+		<manifestclasspath property="client.classpath" jarfile="${java.dist}/catan-client.jar">
+		    <classpath refid="java.lib.classpath"/>
+		</manifestclasspath>
+ 		<jar jarfile="${java.dist}/catan-client.jar" basedir="${java.build}">
+			<manifest>
+				<attribute name="Main-Class" value="client.main.Catan"/>
+				<attribute name="Class-Path" value="${client.classpath}" />
+			</manifest>
+		</jar>
+ 		<jar jarfile="${java.dist}/catan-server.jar" basedir="${java.build}">
+			<manifest>
+				<attribute name="Main-Class" value="server.communication.ServerCommunicator"/>
+				<attribute name="Class-Path" value="${server.classpath}" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="client" depends="package" description="compiles, packages, and runs the student client">
+		<java jar="${java.dist}/catan-client.jar" dir="${java.dist}" fork="yes">
+			<sysproperty key="com.sun.management.jmxremote" value=""/>
+			<assertions>
+				<enable/>
+			</assertions>
+			<arg value="localhost" />
+			<arg value="${port.arg}" />
+		</java>
+	</target>
+ 	
+	<target name="server-file" depends="package" description="compiles, packages, and runs the student server">
+		<java jar="${java.dist}/catan-server.jar" dir="${java.dist}" fork="yes">
+			<sysproperty key="com.sun.management.jmxremote" value=""/>
+			<assertions>
+				<enable/>
+			</assertions>
+			<arg value="${port.arg}" />
+			<arg value="file" />
+		</java>
+	</target>
+ 	
+	<target name="server-sql" depends="package" description="compiles, packages, and runs the student server">
+		<java jar="${java.dist}/catan-server.jar" dir="${java.dist}" fork="yes">
+			<sysproperty key="com.sun.management.jmxremote" value=""/>
+			<assertions>
+				<enable/>
+			</assertions>
+			<arg value="${port.arg}" />
+			<arg value="sql" />
+		</java>
+	</target>
+	
+	<target name="our-server" depends="package" description="compiles, packages, and runs the student server">
+		<java jar="${java.dist}/catan-server.jar" dir="${java.dist}" fork="yes">
+			<sysproperty key="com.sun.management.jmxremote" value=""/>
+			<assertions>
+				<enable/>
+			</assertions>
+			<arg value="${port.arg}" />
+			<arg value="${arg0}" />
+		</java>
+	</target>
+    
+    <target name="make-tester-zip" depends="package" description="makes a zip file for your testing team">
+        <zip destfile="./tester.zip" basedir="${java.dist}" />
+    </target>
+	
+	<target name="test" depends="compile">
+	  <junit printsummary="yes" haltonfailure="yes" fork="yes">
+	    <classpath>
+	      <pathelement location="${java.build}"/>
+	      <path refid="java.lib.classpath"/>
+	    </classpath>
+	  	<formatter type="plain" usefile="true" extension=".log" />
+	    <test name="shared.locations.HexLocationTest" haltonfailure="no"/>
+	    <test name="shared.locations.EdgeLocationTest" haltonfailure="no"/>
+	    <test name="shared.locations.VertexLocationTest" haltonfailure="no"/>
+	    <test name="shared.model.BoardTest" haltonfailure="no"/>
+	    <test name="shared.model.ModelFacadeTest" haltonfailure="no"/>
+	  </junit>
+	</target>
+  
+</project>

@@ -1,0 +1,139 @@
+ {
+  "bank": {
+	 "brick": 1,
+	 "ore": 1,
+	 "sheep": 1,
+	 "wheat": 1,
+	 "wood": 1
+ },
+ "chat": {
+ "lines": [
+ {
+ "message": "string",
+ "source": "string"
+ }
+ ]
+ },
+ "log": {
+ "lines": [
+ {
+ "message": "string",
+ "source": "string"
+ }
+ ]
+ },
+ "map": {
+ "hexes": [
+ {
+ "location": {
+ "x": 1,
+ "y": 1
+ },
+ "resource": "string",
+ "number": 1
+ }
+ ],
+ "ports": [
+ {
+ "resource": "string",
+ "location": {
+ "x": 1,
+ "y": 1
+ },
+ "direction": "string",
+ "ratio": 1
+ }
+ ],
+ "roads": [
+ {
+ "owner": 1,
+ "location": {
+ "x": 1,
+ "y": 1,
+ "direction": "string"
+ }
+ }
+ ],
+ "settlements": [
+	 {
+	 "owner": 1,
+	 "location": {
+	 "x": 1,
+	 "y": 1,
+	 "direction": "string"
+	 }
+ }
+ ],
+ "cities": [
+ {
+ "owner": 1,
+ "location": {
+ "x": 1,
+ "y": 1,
+ "direction": "string"
+ }
+ }
+ ],
+ "radius": 1,
+ "robber": {
+ "x": 1,
+ "y": 1
+ }
+ },
+ "players": [
+ {
+ "cities": "number",
+ "color": "string",
+ "discarded": "boolean",
+ "monuments": "number",
+ "name": "string",
+ "newDevCards": {
+ "monopoly": "number",
+ "monument": "number",
+ "roadBuilding": "number",
+ "soldier": "number",
+ "yearOfPlenty": "number"
+ },
+ "oldDevCards": {
+ "monopoly": "number",
+ "monument": "number",
+ "roadBuilding": "number",
+ "soldier": "number",
+ "yearOfPlenty": "number"
+ },
+ "player1": 1,
+ "playedDevCard": "boolean",
+ "playerID": 1,
+ "resources": {
+ "brick": 1,
+ "ore": 1,
+ "sheep": 1,
+ "wheat": 1,
+ "wood": 1
+ },
+ "roads": "number",
+ "settlements": 1,
+ "soldiers": 1,
+ "victoryPoints": 1
+ }
+ ],
+ "tradeOffer": {
+ "sender": 1,
+ "receiver": 1,
+ "offer": {
+ "brick": 1,
+ "ore": 1,
+ "sheep": 1,
+ "wheat": 1,
+ "wood": 1
+ }
+ },
+ "turnTracker": {
+ "currentTurn": 1,
+ "status": "string",
+ "longestRoad": 1,
+ "largestArmy": 1
+ },
+ "version": 1,
+ "winner": 1
+}

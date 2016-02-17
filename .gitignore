@@ -1,0 +1,10 @@
+/bin
+.classpath
+~*
+/bin1/
+log.txt
+log.*
+*.sqlite
+fileStorage/*
+build/**/*
+dist/**/*
